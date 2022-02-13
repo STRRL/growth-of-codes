@@ -17,7 +17,7 @@ func main() {
 	analyzer := analyze.NewAnalyzer(
 		repository,
 		"master",
-		analyze.PeriodDaily,
+		analyze.PeriodWeekly,
 		scc.NewCommandLineSCC(),
 	)
 	result, err := analyzer.Analyze()

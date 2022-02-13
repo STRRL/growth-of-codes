@@ -12,6 +12,7 @@ type Period string
 
 const PeriodAll Period = "All"
 const PeriodDaily Period = "daily"
+const PeriodWeekly Period = "weekly"
 
 type Analyzer struct {
 	repo   git.RepositoryOnFileSystem
@@ -69,17 +70,37 @@ func (it *Analyzer) filteringCommitsWithPeriod(commitsOrderByCommitTime []git.Co
 	lastDay := time.Time{}
 
 	for _, commit := range commitsOrderByCommitTime {
-		if !it.isSameDate(commit.Time, lastDay) {
-			result = append(result, commit)
-
+		if period == PeriodDaily {
+			if !it.inSameDate(commit.Time, lastDay) {
+				result = append(result, commit)
+				lastDay = commit.Time
+			}
 		}
-		lastDay = commit.Time
+
+		if period == PeriodWeekly {
+			if !it.inSameWeek(commit.Time, lastDay) {
+				result = append(result, commit)
+				lastDay = commit.Time
+			}
+		}
 	}
 	return result
 }
 
-func (it Analyzer) isSameDate(t1 time.Time, t2 time.Time) bool {
+func (it Analyzer) inSameDate(t1 time.Time, t2 time.Time) bool {
 	return t1.Year() == t2.Year() && t1.Month() == t2.Month() && t1.Day() == t2.Day()
+}
+
+func (it Analyzer) inSameWeek(t1 time.Time, t2 time.Time) bool {
+	var before, after time.Time
+	if t1.Before(t2) {
+		before = t1
+		after = t2
+	} else {
+		before = t2
+		after = t1
+	}
+	return after.Sub(before).Hours() < (7 * 24)
 }
 
 type CodeComplexitySnapshot struct {
