@@ -4,6 +4,7 @@ go 1.17
 
 require (
 	github.com/boyter/scc/v3 v3.0.1-0.20220209005526-994ee4b6e5e4
+	github.com/cheggaaa/pb/v3 v3.0.8
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.3.0
@@ -14,7 +15,6 @@ require (
 	github.com/ProtonMail/go-crypto v0.0.0-20210428141323-04723f9f07d7 // indirect
 	github.com/VividCortex/ewma v1.1.1 // indirect
 	github.com/acomagu/bufpipe v1.0.3 // indirect
-	github.com/cheggaaa/pb/v3 v3.0.8 // indirect
 	github.com/dbaggerman/cuba v0.3.2 // indirect
 	github.com/emirpasic/gods v1.12.0 // indirect
 	github.com/fatih/color v1.13.0 // indirect
