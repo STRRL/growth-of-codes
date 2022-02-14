@@ -1,12 +1,14 @@
 package git
 
 import (
+	"io"
+	"os"
+	"reflect"
+
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/object"
 	"github.com/pkg/errors"
-	"os"
-	"reflect"
 )
 
 type PlainRepository struct {
@@ -39,13 +41,14 @@ func (it *PlainRepository) Checkout(hash string) error {
 }
 
 // ClonePlainGitRepository would clone the repository from the given url.
-func ClonePlainGitRepository(url string) (*PlainRepository, error) {
+func ClonePlainGitRepository(url string, progress io.Writer) (*PlainRepository, error) {
 	tempDir, err := os.MkdirTemp(os.TempDir(), "goc-git-repo-*")
 	if err != nil {
 		return nil, errors.Wrap(err, "create temp dir to clone the repository")
 	}
 	repository, err := git.PlainClone(tempDir, false, &git.CloneOptions{
-		URL: url,
+		URL:      url,
+		Progress: progress,
 	})
 	if err != nil {
 		return nil, errors.Wrap(err, "clone the repository")

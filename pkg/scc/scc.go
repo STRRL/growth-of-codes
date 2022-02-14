@@ -3,9 +3,10 @@ package scc
 import (
 	"bytes"
 	"encoding/json"
+	"os/exec"
+
 	"github.com/boyter/scc/v3/processor"
 	"github.com/pkg/errors"
-	"os/exec"
 )
 
 type Adaptor interface {

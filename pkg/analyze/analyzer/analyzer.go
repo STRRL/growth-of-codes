@@ -1,18 +1,22 @@
-package analyze
+package analyzer
 
 import (
+	"github.com/cheggaaa/pb/v3"
+	"log"
+	"time"
+
 	"github.com/STRRL/growth-of-codes/pkg/git"
 	"github.com/STRRL/growth-of-codes/pkg/scc"
 	"github.com/boyter/scc/v3/processor"
 	"github.com/pkg/errors"
-	"time"
 )
 
 type Period string
 
-const PeriodAll Period = "All"
+const PeriodAll Period = "all"
 const PeriodDaily Period = "daily"
 const PeriodWeekly Period = "weekly"
+const PeriodMonthly Period = "monthly"
 
 type Analyzer struct {
 	repo   git.RepositoryOnFileSystem
@@ -27,17 +31,24 @@ func NewAnalyzer(repo git.RepositoryOnFileSystem, branch string, period Period, 
 
 func (it *Analyzer) Analyze() ([]CodeComplexitySnapshot, error) {
 	path := it.repo.GetRepositoryPath()
-
+	log.Println("list all commits")
 	commits, err := it.repo.ListCommitsOfBranchOrderedByCommitTimeAsc(it.branch)
 	if err != nil {
 		return nil, err
 	}
 
+	log.Printf("sampling all %d commits with sampling rate \"%s\"\n", len(commits), it.period)
 	filteredCommits := it.filteringCommitsWithPeriod(commits, it.period)
+
+	log.Printf("analyzing %d commits\n", len(filteredCommits))
 
 	var result []CodeComplexitySnapshot
 
+	all := len(filteredCommits)
+	bar := pb.StartNew(all)
+
 	for _, commit := range filteredCommits {
+		bar.Increment()
 		err := it.repo.Checkout(commit.Hash)
 		if err != nil {
 			return nil, errors.Wrapf(err, "analyze, checkout, %s", commit.Hash)
@@ -52,9 +63,8 @@ func (it *Analyzer) Analyze() ([]CodeComplexitySnapshot, error) {
 				CommitTime: commit.Time,
 				Complexity: summaries,
 			})
-
 	}
-
+	bar.Finish()
 	return result, nil
 }
 
@@ -83,6 +93,13 @@ func (it *Analyzer) filteringCommitsWithPeriod(commitsOrderByCommitTime []git.Co
 				lastDay = commit.Time
 			}
 		}
+
+		if period == PeriodMonthly {
+			if !it.inSameMonth(commit.Time, lastDay) {
+				result = append(result, commit)
+				lastDay = commit.Time
+			}
+		}
 	}
 	return result
 }
@@ -101,6 +118,18 @@ func (it Analyzer) inSameWeek(t1 time.Time, t2 time.Time) bool {
 		after = t1
 	}
 	return after.Sub(before).Hours() < (7 * 24)
+}
+
+func (it *Analyzer) inSameMonth(t1 time.Time, t2 time.Time) bool {
+	var before, after time.Time
+	if t1.Before(t2) {
+		before = t1
+		after = t2
+	} else {
+		before = t2
+		after = t1
+	}
+	return after.Sub(before).Hours() < (30 * 24)
 }
 
 type CodeComplexitySnapshot struct {
