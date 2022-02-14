@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: set-matrix
-        run: echo "::set-output name=matrix::[$(cat ${{ inputs.repoListFile }} | jq -r 'join(", ")')]"
+        run: echo "::set-output name=matrix::[$(cat ${{ github.event.inputs.repoListFile }} | jq -r 'join(", ")')]"
   goc-analyze:
     needs: [ list-repos ]
     runs-on: ubuntu-latest
