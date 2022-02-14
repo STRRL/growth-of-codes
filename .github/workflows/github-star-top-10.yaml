@@ -25,6 +25,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        reoo: ${{ needs.list-repos.outputs.matrix }}
+        reoo: ${{ fromJson(needs.list-repos.outputs.matrix) }}
     steps:
       - run: echo "try to execute goc-analyze on repo ${{ matrix.reoo }}"
