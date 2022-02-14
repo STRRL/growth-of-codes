@@ -10,6 +10,7 @@ on:
         type: choice
         options:
           - 'github-star-top-10.json'
+          - 'github-most-valuable-top-100.json'
 
 jobs:
   list-repos:
