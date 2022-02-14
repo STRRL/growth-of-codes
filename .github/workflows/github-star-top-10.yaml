@@ -1,0 +1,29 @@
+name: goc-analyze with file
+
+on:
+  workflow_dispatch:
+    repoListFile:
+      description: 'list of repo to analyze'
+      required: true
+      default: 'github-star-top-10.json'
+      type: choice
+      options:
+        - 'github-star-top-10.json'
+
+jobs:
+  list-repos:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::[$(cat ${{ inputs.repoListFile }} | jq -r 'join(", ")')]"
+  goc-analyze:
+    needs: [ list-repos ]
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        reoo: ${{ needs.list-repos.outputs.matrix }}
+    steps:
+      - run: echo "try to execute goc-analyze on repo ${{ matrix.reoo }}"
