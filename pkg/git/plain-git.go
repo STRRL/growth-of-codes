@@ -67,21 +67,22 @@ func OpenPlainGitRepository(path string) (*PlainRepository, error) {
 }
 
 func (it *PlainRepository) ListCommitsOfBranchOrderedByCommitTimeAsc(branchName string) ([]Commit, error) {
-	branch, err := it.repo.Branch(branchName)
-	if err != nil {
-		return nil, errors.Wrapf(err, "get branch %s", branchName)
-	}
 
-	worktree, err := it.repo.Worktree()
-	if err != nil {
-		return nil, errors.Wrapf(err, "get worktree")
-	}
-
-	err = worktree.Checkout(&git.CheckoutOptions{
-		Branch: branch.Merge,
-	})
-	if err != nil {
-		return nil, errors.Wrapf(err, "checkout branch %s", branchName)
+	if branchName != "" {
+		branch, err := it.repo.Branch(branchName)
+		if err != nil {
+			return nil, errors.Wrapf(err, "get branch %s", branchName)
+		}
+		worktree, err := it.repo.Worktree()
+		if err != nil {
+			return nil, errors.Wrapf(err, "get worktree")
+		}
+		err = worktree.Checkout(&git.CheckoutOptions{
+			Branch: branch.Merge,
+		})
+		if err != nil {
+			return nil, errors.Wrapf(err, "checkout branch %s", branchName)
+		}
 	}
 
 	commitIter, err := it.repo.Log(&git.LogOptions{
@@ -106,6 +107,10 @@ func (it *PlainRepository) ListCommitsOfBranchOrderedByCommitTimeAsc(branchName 
 
 	it.inPlaceReverseSlice(result)
 	return result, nil
+}
+
+func (it *PlainRepository) defaultBranch() (*plumbing.Reference, error) {
+	return it.repo.Reference("HEAD", false)
 }
 
 func (it PlainRepository) inPlaceReverseSlice(commits []Commit) {
