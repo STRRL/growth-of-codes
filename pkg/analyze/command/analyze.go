@@ -30,7 +30,7 @@ func NewAnalyzeCommand() (*cobra.Command, error) {
 		},
 	}
 
-	cmd.Flags().StringVarP(&options.Branch, "branch", "b", "master", "branch name")
+	cmd.Flags().StringVarP(&options.Branch, "branch", "b", "", "branch name")
 	cmd.Flags().StringVar((*string)(&options.SamplingRate), "sampling-rate", string(analyzer.PeriodWeekly), "sampling rate")
 
 	err := cmd.RegisterFlagCompletionFunc("sampling-rate", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
