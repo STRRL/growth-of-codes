@@ -2,13 +2,14 @@ name: goc-analyze with file
 
 on:
   workflow_dispatch:
-    repoListFile:
-      description: 'list of repo to analyze'
-      required: true
-      default: 'github-star-top-10.json'
-      type: choice
-      options:
-        - 'github-star-top-10.json'
+    inputs:
+      repoListFile:
+        description: 'list of repo to analyze'
+        required: true
+        default: 'github-star-top-10.json'
+        type: choice
+        options:
+          - 'github-star-top-10.json'
 
 jobs:
   list-repos:
