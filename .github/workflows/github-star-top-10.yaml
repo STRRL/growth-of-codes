@@ -1,4 +1,4 @@
-name: goc-analyze with list file
+name: Analyze Repos with list file
 
 on:
   workflow_dispatch:

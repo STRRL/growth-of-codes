@@ -7,7 +7,7 @@ ENV GO111MODULE on
 RUN go install github.com/boyter/scc@latest
 RUN cd /growth-of-codes && make bin/goc-analyze
 
-FROM alpine
+FROM debian:stable-slim
 LABEL org.opencontainers.image.source=https://github.com/STRRL/growth-of-codes
 COPY --from=build-env /go/bin/scc /usr/local/bin/scc
 COPY --from=build-env /growth-of-codes/bin/goc-analyze /usr/local/bin/goc-analyze
