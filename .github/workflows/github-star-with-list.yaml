@@ -25,6 +25,7 @@ jobs:
     needs: [ list-repos ]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         reoo: ${{ fromJson(needs.list-repos.outputs.matrix) }}
     steps:
