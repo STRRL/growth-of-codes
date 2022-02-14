@@ -27,4 +27,9 @@ jobs:
       matrix:
         reoo: ${{ fromJson(needs.list-repos.outputs.matrix) }}
     steps:
-      - run: echo "try to execute goc-analyze on repo ${{ matrix.reoo }}"
+      - run: |
+          docker run ghcr.io/strrl/goc-analyze:latest analyze --sampling-rate monthly ${{ matrix.reoo }} > ${{ matrix.reoo }}.csv
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.reoo }}.csv
+          path: ${{ matrix.reoo }}.csv
