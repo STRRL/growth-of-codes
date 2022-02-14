@@ -1,0 +1,6 @@
+{
+  "action": "workflow_dispatch",
+  "inputs": {
+      "repoListFile": "github-star-top-10.json"
+  }
+}
