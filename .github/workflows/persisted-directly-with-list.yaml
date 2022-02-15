@@ -43,6 +43,6 @@ jobs:
             ./${{ steps.set-output-file.outputs.outputFile }}.csv:/${{ steps.set-output-file.outputs.outputFile }}.csv \
             ghcr.io/strrl/goc-persistent:latest \
             load \
-            --mysql-dsn ${{ secret.dsn }} \
+            --mysql-dsn ${{ secrets.dsn }} \
             --from-csv /${{ steps.set-output-file.outputs.outputFile }}.csv \
             ${{ matrix.reoo }}
