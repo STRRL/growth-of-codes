@@ -13,4 +13,4 @@ RUN apt-get update \
 RUN update-ca-certificates
 
 COPY --from=build-env /growth-of-codes/bin/goc-persistent /usr/local/bin/goc-persistent
-ENTRYPOINT ["goc-goc-persistent"]
+ENTRYPOINT ["goc-persistent"]
