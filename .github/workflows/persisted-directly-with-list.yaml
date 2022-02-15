@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "::set-output name=outputFile::$(basename ${{ matrix.reoo }})"
       - run: |
-          docker run ghcr.io/strrl/goc-analyze:latest analyze --sampling-rate monthly ${{ matrix.reoo }} > ${{ steps.set-output-file.outputs.outputFile }}.csv
+          docker run ghcr.io/strrl/goc-analyze:latest analyze --per-file --sampling-rate monthly ${{ matrix.reoo }} > ${{ steps.set-output-file.outputs.outputFile }}.csv
       - uses: actions/upload-artifact@v2
         with:
           name: ${{ steps.set-output-file.outputs.outputFile }}.csv
