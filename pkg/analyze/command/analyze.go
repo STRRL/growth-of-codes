@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -32,6 +33,7 @@ func NewAnalyzeCommand() (*cobra.Command, error) {
 
 	cmd.Flags().StringVarP(&options.Branch, "branch", "b", "", "branch name")
 	cmd.Flags().StringVar((*string)(&options.SamplingRate), "sampling-rate", string(analyzer.PeriodWeekly), "sampling rate")
+	cmd.Flags().BoolVar(&options.PerFile, "per-file", false, "output analyze result per file")
 
 	err := cmd.RegisterFlagCompletionFunc("sampling-rate", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		return []string{
@@ -52,6 +54,7 @@ type AnalyzeOption struct {
 	Branch       string
 	SamplingRate analyzer.Period
 	MaxPoint     uint
+	PerFile      bool
 }
 
 func runWithOption(ctx context.Context, repo string, options *AnalyzeOption) error {
@@ -75,9 +78,24 @@ func runWithOption(ctx context.Context, repo string, options *AnalyzeOption) err
 	if err != nil {
 		return err
 	}
-	fmt.Printf("time, complexity, commit\n")
-	for _, item := range result {
-		fmt.Printf("%s, %d, %s\n", item.CommitTime.In(location).Format(time.RFC3339), item.AllComplexity(), item.Commit)
+	if options.PerFile {
+		fmt.Printf("time, language, file, complexity, commit\n")
+		for _, snapshot := range result {
+			for _, summary := range snapshot.Complexity {
+				for _, file := range summary.Files {
+					rel, err := filepath.Rel(repository.GetRepositoryPath(), file.Location)
+					if err != nil {
+						return err
+					}
+					fmt.Printf("%s, %s,%s, %d, %s\n", snapshot.CommitTime.In(location).Format(time.RFC3339), file.Language, rel, file.Complexity, snapshot.Commit)
+				}
+			}
+		}
+	} else {
+		fmt.Printf("time, complexity, commit\n")
+		for _, item := range result {
+			fmt.Printf("%s, %d, %s\n", item.CommitTime.In(location).Format(time.RFC3339), item.AllComplexity(), item.Commit)
+		}
 	}
 	return nil
 }

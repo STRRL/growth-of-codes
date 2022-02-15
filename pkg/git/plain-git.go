@@ -37,6 +37,9 @@ func (it *PlainRepository) Checkout(hash string) error {
 		Force: true,
 		Keep:  false,
 	})
+	err = worktree.Clean(&git.CleanOptions{
+		Dir: true,
+	})
 	return nil
 }
 
