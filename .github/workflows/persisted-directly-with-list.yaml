@@ -1,4 +1,4 @@
-name: Analyze Repos with list file
+name: Analyze Repos Then Upload with list file
 
 on:
   workflow_dispatch:

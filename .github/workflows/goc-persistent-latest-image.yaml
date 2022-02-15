@@ -1,4 +1,4 @@
-name: goc-analyze Latest Image
+name: goc-persistent Latest Image
 
 on:
   push:
