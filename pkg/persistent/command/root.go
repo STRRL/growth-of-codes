@@ -8,5 +8,11 @@ func NewRootCommand() (*cobra.Command, error) {
 		Short: "Persistent is a tool for uploading goc-analyzed data into database. No common purpose used.",
 	}
 
+	loadCommand, err := NewLoadCommand()
+	if err != nil {
+		return nil, err
+	}
+	cmd.AddCommand(loadCommand)
+
 	return cmd, nil
 }

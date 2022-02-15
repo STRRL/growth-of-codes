@@ -1,0 +1,48 @@
+name: Analyze Repos with list file
+
+on:
+  workflow_dispatch:
+    inputs:
+      repoListFile:
+        description: 'list of repo to analyze'
+        required: true
+        default: 'github-star-top-10.json'
+        type: choice
+        options:
+          - 'github-star-top-10.json'
+          - 'github-most-valuable-top-100.json'
+
+jobs:
+  list-repos:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - uses: actions/checkout@v2
+      - id: set-matrix
+        run: echo "::set-output name=matrix::$(cat ${{ github.event.inputs.repoListFile }} | jq -c)"
+  goc-analyze:
+    needs: [ list-repos ]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        reoo: ${{ fromJson(needs.list-repos.outputs.matrix) }}
+    steps:
+      - id: set-output-file
+        run: |
+          echo "::set-output name=outputFile::$(basename ${{ matrix.reoo }})"
+      - run: |
+          docker run ghcr.io/strrl/goc-analyze:latest analyze --sampling-rate monthly ${{ matrix.reoo }} > ${{ steps.set-output-file.outputs.outputFile }}.csv
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ steps.set-output-file.outputs.outputFile }}.csv
+          path: ${{ steps.set-output-file.outputs.outputFile }}.csv
+      - run: |
+          docker run -v \
+            ./${{ steps.set-output-file.outputs.outputFile }}.csv:/${{ steps.set-output-file.outputs.outputFile }}.csv \
+            ghcr.io/strrl/goc-persistent:latest \
+            load \
+            --mysql-dsn ${{ secret.dsn }} \
+            --from-csv /${{ steps.set-output-file.outputs.outputFile }}.csv \
+            ${{ matrix.reoo }}
