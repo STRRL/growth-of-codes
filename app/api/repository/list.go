@@ -3,7 +3,6 @@ package repository
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/STRRL/growth-of-codes/pkg/persistent/entity"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -37,10 +36,6 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func listRepositories(db *gorm.DB) ([]string, error) {
-	err := db.AutoMigrate(&entity.FileComplexitySnapshot{})
-	if err != nil {
-		return nil, err
-	}
 	var result []string
 	query := db.Raw("select distinct project from file_complexity_snapshots;").Scan(&result)
 	if query.Error != nil {
