@@ -1,4 +1,4 @@
-package query
+package api
 
 import (
 	"fmt"
@@ -6,5 +6,5 @@ import (
 )
 
 func Handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "<h1>Hello from subpath query!</h1>")
+	_, _ = fmt.Fprintf(w, "growth-of.codes API under construction")
 }
