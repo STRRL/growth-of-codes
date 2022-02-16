@@ -8,6 +8,8 @@ require (
 	github.com/go-git/go-git/v5 v5.4.2
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/cobra v1.3.0
+	gorm.io/driver/mysql v1.2.3
+	gorm.io/gorm v1.22.5
 )
 
 require (
@@ -45,6 +47,4 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gorm.io/driver/mysql v1.2.3 // indirect
-	gorm.io/gorm v1.22.5 // indirect
 )
