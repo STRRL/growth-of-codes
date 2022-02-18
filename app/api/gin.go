@@ -5,20 +5,19 @@ import (
 	"net/http"
 )
 
-var (
-	app *gin.Engine
-)
+var app *gin.Engine
 
 func init() {
 	app = gin.New()
-	r := app.Group("/api")
-	r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
+	router := app.Group("/api")
+	router.GET("/healthz", func(c *gin.Context) {
+		c.JSON(200, gin.H{
+			"message": "ok",
 		})
 	})
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
 	app.ServeHTTP(w, r)
+
 }
