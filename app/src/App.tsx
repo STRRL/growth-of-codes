@@ -1,8 +1,6 @@
 import React from "react";
-import Button from "@mui/material/Button";
 import "./App.css";
-import { AppBar, IconButton, Toolbar, Typography } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Toolbar, Typography } from "@mui/material";
 import Chart from "./component/chart";
 
 export default App;
