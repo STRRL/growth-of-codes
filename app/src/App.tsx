@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { AppBar, Toolbar, Typography } from "@mui/material";
-import Chart from "./component/chart";
+import Chart, { Point } from "./component/chart";
 
 export default App;
 
 function App() {
+  useEffect(() => {
+    fetch("/api/random")
+      .then((response) => response.json())
+      .then((response) => setTimeSeries(response))
+      .catch((error) => console.error(error));
+  }, []);
+
+  const [timeSeries, setTimeSeries] = useState<Point[]>([]);
   return (
     <div>
       <AppBar position="static">
@@ -15,7 +23,7 @@ function App() {
           </Typography>
         </Toolbar>
       </AppBar>
-      <Chart />
+      <Chart timeSeries={timeSeries} />
     </div>
   );
 }
