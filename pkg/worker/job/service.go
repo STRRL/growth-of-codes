@@ -44,7 +44,7 @@ func (it *ServiceImpl) AcquireJob(num uint) ([]JobDispatch, error) {
 	notAssigned, err := it.jobRepo.ListNotAssigned(num)
 	if err != nil {
 		return nil, err
-	}s
+	}
 	// convert notAssigned to JobDispatch
 	dispatches := make([]JobDispatch, len(notAssigned))
 	for i, job := range notAssigned {

@@ -7,7 +7,7 @@ export default App;
 
 function App() {
   useEffect(() => {
-    fetch("/api/random/20")
+    fetch("/api/repo/chaos-mesh")
       .then((response) => response.json())
       .then((response) => setTimeSeries(response))
       .catch((error) => console.error(error));

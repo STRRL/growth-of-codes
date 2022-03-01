@@ -19,5 +19,15 @@ func NewServerlessGinApp() *gin.Engine {
 		count, _ = strconv.Atoi(countParameter)
 		c.JSON(200, RandomTimeSeries(count))
 	})
+	router.GET("/repo/chaos-mesh", func(c *gin.Context) {
+		result, err := ComplexityOfChaosMesh()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, result)
+	})
 	return app
 }
