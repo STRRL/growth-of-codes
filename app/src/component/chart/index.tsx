@@ -18,18 +18,6 @@ export interface Point {
 }
 
 function Chart(props: ChartProps) {
-  const extractDataSeries = (timeSeries: Point[]) => {
-    const data = timeSeries.map((point) => {
-      return point.value;
-    });
-    const labels = timeSeries.map((point) => {
-      return moment(point.time).format("YYYY-MM-DD");
-      // return moment(point.time).format("YYYY-MM-DD HH:mm:ss");
-    });
-    return { labels, data };
-  };
-  const { labels, data } = extractDataSeries(props.timeSeries);
-
   return (
       <ResponsiveContainer>
         <LineChart
