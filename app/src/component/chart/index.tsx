@@ -1,8 +1,13 @@
-import { Line } from "react-chartjs-2";
-
-import { Chart as ChartJS, registerables } from "chart.js";
-
-ChartJS.register(...registerables);
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from "recharts";
+import moment from "moment";
 
 export interface ChartProps {
   timeSeries: Point[];
@@ -18,26 +23,30 @@ function Chart(props: ChartProps) {
       return point.value;
     });
     const labels = timeSeries.map((point) => {
-      return point.time;
+      return moment(point.time).format("YYYY-MM-DD");
+      // return moment(point.time).format("YYYY-MM-DD HH:mm:ss");
     });
     return { labels, data };
   };
   const { labels, data } = extractDataSeries(props.timeSeries);
 
   return (
-    <div>
-      <Line
-        data={{
-          labels: labels,
-          datasets: [
-            {
-              label: "random",
-              data: data,
-            },
-          ],
-        }}
-      ></Line>
-    </div>
+      <ResponsiveContainer>
+        <LineChart
+          data={props.timeSeries.map((point) => {
+            return {
+              time: moment(point.time).format("YYYY-MM-DD"),
+              value: point.value,
+            };
+          })}
+        >
+          <CartesianGrid />
+          <XAxis dataKey="time" />
+          <YAxis />
+          <Tooltip />
+          <Line type="monotone" dataKey="value" stroke="#8884d8" />
+        </LineChart>
+      </ResponsiveContainer>
   );
 }
 

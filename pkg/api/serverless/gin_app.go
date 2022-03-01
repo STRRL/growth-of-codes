@@ -1,6 +1,9 @@
 package serverless
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"strconv"
+)
 
 func NewServerlessGinApp() *gin.Engine {
 	app := gin.New()
@@ -10,8 +13,11 @@ func NewServerlessGinApp() *gin.Engine {
 			"message": "ok",
 		})
 	})
-	router.GET("/random", func(c *gin.Context) {
-		c.JSON(200, RandomTimeSeries())
+	router.GET("/random/:count", func(c *gin.Context) {
+		count := defaultCount
+		countParameter := c.Param("count")
+		count, _ = strconv.Atoi(countParameter)
+		c.JSON(200, RandomTimeSeries(count))
 	})
 	return app
 }

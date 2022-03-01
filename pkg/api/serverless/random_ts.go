@@ -12,10 +12,10 @@ type Point struct {
 
 type TimeSeries []Point
 
-const count = 30
+var defaultCount = 30
 
-func RandomTimeSeries() TimeSeries {
-	start := time.Now().Add(-count * time.Second)
+func RandomTimeSeries(count int) TimeSeries {
+	start := time.Now().Add(-1 * time.Duration(count) * time.Second)
 	var result TimeSeries
 	for i := 0; i < count; i++ {
 		now := start.Add(time.Duration(i) * time.Second)
