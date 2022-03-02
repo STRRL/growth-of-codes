@@ -9,6 +9,10 @@ type ResultOfRawSelect struct {
 }
 
 func ComplexityOfChaosMesh() (TimeSeries, error) {
+	return ComplexityForRepositoryAndLanguage("github.com/chaos-mesh/chaos-mesh", "Go")
+}
+
+func ComplexityForRepositoryAndLanguage(repo string, language string) (TimeSeries, error) {
 	gormDB, err := getGormDB()
 	if err != nil {
 		return nil, err
@@ -16,8 +20,8 @@ func ComplexityOfChaosMesh() (TimeSeries, error) {
 
 	var snapshots []ResultOfRawSelect
 	if err = gormDB.Raw("SELECT commit_hash, commit_time, SUM(complexity) AS complexity FROM file_complexity_snapshots WHERE project = ? AND language = ? GROUP BY commit_hash, commit_time ORDER BY commit_time;",
-		"github.com/chaos-mesh/chaos-mesh",
-		"Go",
+		repo,
+		language,
 	).Find(&snapshots).Error; err != nil {
 		return nil, err
 	}
