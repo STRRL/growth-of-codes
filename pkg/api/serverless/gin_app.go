@@ -45,5 +45,26 @@ func NewServerlessGinApp() *gin.Engine {
 		}
 		c.JSON(200, result)
 	})
+	router.GET("/repo/list", func(c *gin.Context) {
+		result, err := AllAvailableRepo()
+		if err != nil {
+			c.JSON(500, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, result)
+	})
+	router.GET("/language/list", func(c *gin.Context) {
+		repo := c.Query("repo")
+		result, err := AvailableLanguageForRepo(repo)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, result)
+	})
 	return app
 }
