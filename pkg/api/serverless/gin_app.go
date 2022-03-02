@@ -29,5 +29,21 @@ func NewServerlessGinApp() *gin.Engine {
 		}
 		c.JSON(200, result)
 	})
+	router.GET("/complexity", func(c *gin.Context) {
+		repo := c.Query("repo")
+		language := c.Query("language")
+		if len(language) == 0 || len(repo) == 0 {
+			c.JSON(200, nil)
+			return
+		}
+		result, err := ComplexityForRepositoryAndLanguage(repo, language)
+		if err != nil {
+			c.JSON(500, gin.H{
+				"message": err.Error(),
+			})
+			return
+		}
+		c.JSON(200, result)
+	})
 	return app
 }
