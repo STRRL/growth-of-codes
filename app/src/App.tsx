@@ -41,7 +41,13 @@ function App() {
     if (language !== "" && repo !== "") {
       fetch(`/api/complexity?repo=${repo}&language=${language}`)
         .then((response) => response.json())
-        .then((response) => setTimeSeries(response))
+        .then((response) => {
+          if (response && response.length > 0) {
+            setTimeSeries(response);
+          } else {
+            setTimeSeries([]);
+          }
+        })
         .catch((error) => console.error(error));
     } else {
       setTimeSeries([]);
