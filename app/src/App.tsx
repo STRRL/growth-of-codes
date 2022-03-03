@@ -43,6 +43,8 @@ function App() {
         .then((response) => response.json())
         .then((response) => setTimeSeries(response))
         .catch((error) => console.error(error));
+    } else {
+      setTimeSeries([]);
     }
   }, [repo, language]);
 
