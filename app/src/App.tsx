@@ -9,23 +9,36 @@ import Select from "@mui/material/Select";
 export default App;
 
 function App() {
-  const [languages, setLanguages] = useState<string[]>(["Go", "HTML"]);
+  const [repos, setRepos] = useState<string[]>([]);
+  const [languages, setLanguages] = useState<string[]>([]);
 
-  const repo = "github.com/chaos-mesh/chaos-mesh";
+  const [repo, setRepo] = useState("");
   const [language, setLanguage] = useState("");
 
   useEffect(() => {
-    fetch(`/api/language/list?repo=${repo}`)
+    fetch(`/api/repo/list`)
       .then((response) => response.json())
       .then((response: string[]) => {
         if (response.length > 0) {
-          setLanguages(response);
+          setRepos(response);
         }
       });
+  }, []);
+
+  useEffect(() => {
+    if (repo !== "") {
+      fetch(`/api/language/list?repo=${repo}`)
+        .then((response) => response.json())
+        .then((response: string[]) => {
+          if (response.length > 0) {
+            setLanguages(response);
+          }
+        });
+    }
   }, [repo]);
 
   useEffect(() => {
-    if (language !== "") {
+    if (language !== "" && repo !== "") {
       fetch(`/api/complexity?repo=${repo}&language=${language}`)
         .then((response) => response.json())
         .then((response) => setTimeSeries(response))
@@ -44,6 +57,7 @@ function App() {
         </Toolbar>
       </AppBar>
       <Container>
+        <RepoSelect repos={repos} onRepoChange={(repo) => setRepo(repo)} />
         <LanguageSelect
           languages={languages}
           onLanguageChange={(value) => setLanguage(value)}
@@ -53,6 +67,35 @@ function App() {
         </Box>
       </Container>
     </div>
+  );
+}
+
+function RepoSelect(props: {
+  repos: string[];
+  onRepoChange: (event: string) => void;
+}) {
+  const [repo, setRepo] = useState("");
+  const handleChange = (event: any) => {
+    setRepo(event.target.value);
+    props.onRepoChange(event.target.value);
+  };
+  return (
+    <Box sx={{ minWidth: 120, padding: "20px" }}>
+      <FormControl fullWidth>
+        <InputLabel id="repo-select-label">Repository</InputLabel>
+        <Select
+          labelId="repo-select-label"
+          id="repo-select"
+          value={repo}
+          label="Language"
+          onChange={handleChange}
+        >
+          {props.repos.sort().map((repo) => (
+            <MenuItem value={repo}>{repo}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+    </Box>
   );
 }
 
@@ -68,7 +111,7 @@ function LanguageSelect(props: {
   };
 
   return (
-    <Box sx={{ minWidth: 120 }}>
+    <Box sx={{ minWidth: 120, padding: "20px" }}>
       <FormControl fullWidth>
         <InputLabel id="language-select-label">Language</InputLabel>
         <Select
@@ -78,7 +121,7 @@ function LanguageSelect(props: {
           label="Language"
           onChange={handleChange}
         >
-          {props.languages.map((language) => (
+          {props.languages.sort().map((language) => (
             <MenuItem value={language}>{language}</MenuItem>
           ))}
         </Select>
